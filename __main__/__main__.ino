@@ -18,9 +18,11 @@ char keys[ROWS][COLS] = {
   {'7','8','9','C'},
   {'.','0','#','D'}
 };
-byte rowPins[ROWS] = {13, 12, 11, 10}; // Connect to the row pins of the keypad
-byte colPins[COLS] = {6, 7, 8, 9};
-// Connect to the column pins of the keypad
+// byte rowPins[ROWS] = {13, 12, 11, 10}; // Connect to the row pins of the keypad
+// byte colPins[COLS] = {6 , 7 , 8 , 9}; // Connect to the column pins of the keypad
+
+byte rowPins[ROWS] = {6 , 7 , 8 , 9}; 
+byte colPins[COLS] = {10, 11, 12, 13}; 
 
 // LCD definitions
 #define lcdColumns 16
