@@ -107,7 +107,7 @@ void Machine::formatTimeLCD(unsigned long timeLeftInMillis){
 
 void Machine::showScale(){
   if (LoadCell.update()) {
-    if (millis() > t + 100) {
+    if (millis() > t + 20) {
       float scale = LoadCell.getData(); 
       lcd.setCursor(0,1);
       lcd.print("Mass: ");
