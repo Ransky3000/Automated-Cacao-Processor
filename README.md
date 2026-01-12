@@ -1,4 +1,4 @@
-# Automated Cocoa Mucilage Processor (Rev. 2)
+# Automated Cocoa Mucilage Processor
 **Operating Instructions & User Manual**
 
 ## 1. System Overview
