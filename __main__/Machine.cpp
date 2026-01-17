@@ -163,7 +163,7 @@ void Machine::toggleServo(){
      isServoOpen = false;
      displayLCD(true,0,0,"Valve CLOSED!");
   } else {
-     valveServo.write(180); 
+     valveServo.write(90); 
      isServoOpen = true;
      displayLCD(true,0,0,"Valve OPENED!");
   }
