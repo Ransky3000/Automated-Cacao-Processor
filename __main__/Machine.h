@@ -23,7 +23,8 @@ enum SystemState {
   BEGIN_PROCESS,
   RUN_PROCESS,
   STOP_COUNTDOWN,
-  CANCEL_PROCESS
+  CANCEL_PROCESS,
+  VALVE_OPEN_STATE
 };
 
 class Machine{

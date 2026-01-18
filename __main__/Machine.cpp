@@ -264,6 +264,32 @@ void Machine::runState(){
 }
 
 void Machine::keypadPress(){
+  if (currentState == VALVE_OPEN_STATE) {
+    if (k.getKeys()) {
+      bool c_held = false;
+      bool d_pressed = false;
+
+      for (int i = 0; i < LIST_MAX; i++) {
+        if (k.key[i].kstate == PRESSED || k.key[i].kstate == HOLD) {
+          if (k.key[i].kchar == 'C') c_held = true;
+          if (k.key[i].kchar == 'D') d_pressed = true;
+        }
+      }
+
+      if (c_held) isRelay = true;
+      else isRelay = false;
+
+      if (d_pressed) {
+        valveServo.write(0);
+        isServoOpen = false;
+        isRelay = false;
+        currentState = MENU;
+        displayMainMenu();
+      }
+    }
+    return; // Skip standard getKey logic
+  }
+
   char key = k.getKey();
 
   if (key) {
@@ -291,12 +317,15 @@ void Machine::keypadPress(){
       
       case SERVO_MENU:
           if(key == 'A'){
-             toggleServo();
-             currentState = MENU;
-             displayMainMenu();
+             // Enter Manual Valve Mode
+             valveServo.write(90); 
+             isServoOpen = true;
+             currentState = VALVE_OPEN_STATE;
+             displayLCD(true,0,0,"Valve OPEN!");
+             displayLCD(false,0,1,"Hold C-Run D-Esc");
           } else if(key == 'D'){
              currentState = MENU;
-             displayMainMenu();
+             displayMainMenu(); 
           }
           break;
 
