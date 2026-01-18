@@ -2,15 +2,16 @@
 **Operating Instructions & User Manual**
 
 ## ⚙️ System Overview
-This system is designed to process cocoa beans for a specific duration while monitoring weight in real-time. It features a precise **Load Cell** for mass monitoring, a **Timer-Based Control System** for the wash cycle, and a **Servo-Controlled Valve** for manual discharge.
+This system is designed to process cocoa beans for a specific duration while monitoring weight in real-time. It features a precise **Load Cell** for mass monitoring, a **Timer-Based Control System** for the wash cycle, and a **Servo-Controlled Valve** with a manual "Jog" discharge mode.
 
 ### 🎮 Control Interface Map
 | Key | Function | Description |
 | :--- | :--- | :--- |
 | **0-9** | **Numeric Input** 🔢 | Used to enter Time (Hours, Minutes, Seconds) and Calibration weights. |
-| **A** | **ENTER / CONFIRM** ✅ | Confirms inputs, starts processes, tares the scale, or toggles the Valve. |
-| **B** | **VALVE CONTROL** 🦾 | Opens the Servo Valve Menu to toggle Open/Close. |
-| **D** | **CANCEL / STOP** 🛑 | Returns to the previous menu or triggers **Emergency Stop**. |
+| **A** | **ENTER / CONFIRM** ✅ | Confirms inputs, starts processes, tares the scale, or opens the Valve. |
+| **B** | **VALVE MENU** 🦾 | Opens the Manual Valve Control menu. |
+| **C** | **MANUAL JOG** ✊ | **Hold-to-Run:** Activates motor *only* when valve is open (Dead Man's Switch). |
+| **D** | **CANCEL / STOP** 🛑 | Closes valve, returns to menu, or triggers **Emergency Stop**. |
 | **1** | **Option Select** ⬆️ | Selects the top option in a menu. |
 | **2** | **Option Select** ⬇️ | Selects the bottom option in a menu. |
 
@@ -56,15 +57,20 @@ This system is designed to process cocoa beans for a specific duration while mon
     * Screen displays `Time Reached! / Done..`.
     * After 2 seconds, the system returns to the Main Menu.
 
-### 🦾 Mode B: Manual Valve Control (Servo)
-*Use this feature to manually open or close the discharge valve.*
+### 🦾 Mode B: Manual Valve & Discharge (Servo + Jog)
+*Use this feature to manually open the discharge valve and pulse the motor for cleaning/unclogging.*
 
 1.  **Access:** From the Main Menu, press **B**.
 2.  **Prompt:** Screen displays `Toggle Valve? / A:Yes D:Back`.
-3.  **Action:** Press **A** to toggle the valve position.
-    * If Closed (0°) -> It moves to **OPEN (180°)**. 🔓
-    * If Open (180°) -> It moves to **CLOSED (0°)**. 🔒
-4.  **Feedback:** Screen confirms `Valve OPENED!` or `Valve CLOSED!`.
+3.  **Activate Mode:** Press **A** to Open Valve.
+    * **Servo Action:** Valve moves to **OPEN (90°)**. 🔓
+    * **Screen Update:** Displays `Valve OPEN! / Hold C-Run D-Esc`.
+4.  **Discharge Operation (Dead Man's Switch):**
+    * **HOLD 'C':** Relay turns **ON** (Motor runs) while key is held. ⚡
+    * **RELEASE 'C':** Relay turns **OFF** (Motor stops) immediately.
+5.  **Exit:** Press **D**.
+    * **Servo Action:** Valve moves to **CLOSED (0°)**. 🔒
+    * System returns to Main Menu.
 
 ### ⚖️ Mode C: Scale Maintenance (Check Scale)
 *Use this mode to calibrate or zero the scale.*
@@ -76,18 +82,19 @@ This system is designed to process cocoa beans for a specific duration while mon
 
 ---
 
-## 🛡️ Safety & Troubleshooting
+## 🛡️ Safety Features
 
-### 🛑 Emergency Stop
-If you need to stop the motor/pump immediately while a process is running:
-* **Action:** Press the **D** key.
-* **Result:** The Relay cuts power immediately, Red LED turns off, and the LCD displays `Process Canceled!`.
+### 🔒 Valve Interlock Logic
+The system prevents the motor/pump from running in Manual Mode unless the discharge valve is explicitly **OPEN**. This prevents pressure buildup or mechanical stress from running the pump against a closed valve.
 
-### ⚠️ Common Error Messages
-| Message | Meaning | Action |
-| :--- | :--- | :--- |
-| **HX711 Error!** | Load cell not detected. | Check wiring on Pins D4 and D5. Restart system. |
-| **Timeout** | Sensor not responding. | Ensure the HX711 module is powered correctly. |
+### 🛑 Dead Man's Switch
+In Manual Mode (Mode B), the motor only runs while the operator physically holds the **'C'** key. If the operator releases the key or walks away, the machine stops instantly.
+
+### ⚡ Emergency Stop
+During any automated process (Mode A), pressing **D** triggers an immediate hard stop:
+* Relay cuts power.
+* Red LED turns off.
+* Process state resets.
 
 ---
 
@@ -98,5 +105,4 @@ If you need to stop the motor/pump immediately while a process is running:
 * **Motor Control:** Relay on **Pin D2** (Active HIGH)
 * **Valve Control:** Servo Motor on **Pin A3** (PWM Signal)
 * **Load Cell:** HX711 Interface on **Pins D4 (DT) & D5 (SCK)**
-* **Calibration Memory:** EEPROM Address 0
-* **Safety Feature:** Hard-coded "Instant Cutoff" logic ensures the motor stops exactly at T=0
+* **Safety Logic:** State Machine implementation restricts Relay activation to specific safe states (`RUN_PROCESS` or `VALVE_OPEN_STATE`).
